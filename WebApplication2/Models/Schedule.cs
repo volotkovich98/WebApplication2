@@ -15,7 +15,6 @@ namespace WebApplication2
         public DateTime? Time { get; set; }
         public string DaysOfTheWeek { get; set; }
 
-        public Groups Group { get; set; }
         public ICollection<Groups> Groups { get; set; }
     }
 }

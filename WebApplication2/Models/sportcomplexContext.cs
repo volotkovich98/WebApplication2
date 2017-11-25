@@ -10,22 +10,17 @@ namespace WebApplication2
         public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<Instructor> Instructor { get; set; }
         public virtual DbSet<Schedule> Schedule { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Visitor> Visitor { get; set; }
-
-        public sportcomplexContext(DbContextOptions<sportcomplexContext> options):base(options)
-        {
-
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer(@"Server=admen;Database=sportcomplex;Trusted_Connection=True;");
             }
         }
-
+        public sportcomplexContext(DbContextOptions<sportcomplexContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Abonement>(entity =>
@@ -52,11 +47,13 @@ namespace WebApplication2
                 entity.HasOne(d => d.Instructor)
                     .WithMany(p => p.Groups)
                     .HasForeignKey(d => d.InstructorId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Groups_Instructor");
 
                 entity.HasOne(d => d.Schedule)
                     .WithMany(p => p.Groups)
                     .HasForeignKey(d => d.ScheduleId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Groups_Schedule");
             });
 
@@ -88,11 +85,11 @@ namespace WebApplication2
                 entity.Property(e => e.GroupId).HasColumnName("Group_id");
 
                 entity.Property(e => e.Time).HasColumnType("date");
+            });
 
-                entity.HasOne(d => d.Group)
-                    .WithMany(p => p.ScheduleNavigation)
-                    .HasForeignKey(d => d.GroupId)
-                    .HasConstraintName("FK_Schedule_Groups");
+            modelBuilder.Entity<Users>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
             });
 
             modelBuilder.Entity<Visitor>(entity =>
@@ -116,6 +113,7 @@ namespace WebApplication2
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.Visitor)
                     .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Visitor_Groups");
             });
         }

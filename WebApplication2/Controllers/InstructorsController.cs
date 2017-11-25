@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication2.Controllers
 {
@@ -19,12 +20,14 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Instructors
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Instructor.ToListAsync());
         }
 
         // GET: Instructors/Details/5
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,6 +46,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Instructors/Create
+        [Authorize(Roles = "admin, user")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +57,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Create([Bind("InstructorId,Surname,Name,Experience,Education,Specialization,Qualification")] Instructor instructor)
         {
             if (ModelState.IsValid)
@@ -65,6 +70,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Instructors/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +91,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("InstructorId,Surname,Name,Experience,Education,Specialization,Qualification")] Instructor instructor)
         {
             if (id != instructor.InstructorId)
@@ -116,6 +123,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Instructors/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,6 +142,7 @@ namespace WebApplication2.Controllers
         }
 
         // POST: Instructors/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

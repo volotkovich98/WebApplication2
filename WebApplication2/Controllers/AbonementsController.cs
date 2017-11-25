@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication2.Controllers
 {
@@ -19,13 +20,15 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Abonements
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Abonement.ToListAsync());
         }
 
         // GET: Abonements/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Authorize(Roles = "admin, user")]
+        public async Task<IActionResult>  Details(int? id)
         {
             if (id == null)
             {
@@ -43,6 +46,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Abonements/Create
+        [Authorize(Roles = "admin, user")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +57,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Create([Bind("AbonementId,NumberOfVisits,Price")] Abonement abonement)
         {
             if (ModelState.IsValid)
@@ -65,6 +70,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Abonements/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +91,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("AbonementId,NumberOfVisits,Price")] Abonement abonement)
         {
             if (id != abonement.AbonementId)
@@ -116,6 +123,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Abonements/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,6 +142,7 @@ namespace WebApplication2.Controllers
         }
 
         // POST: Abonements/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

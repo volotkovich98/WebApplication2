@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication2.Controllers
 {
@@ -19,6 +20,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Visitors
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Index()
         {
             var sportcomplexContext = _context.Visitor.Include(v => v.Abonement).Include(v => v.Group);
@@ -26,6 +28,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Visitors/Details/5
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +49,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Visitors/Create
+        [Authorize(Roles = "admin, user")]
         public IActionResult Create()
         {
             ViewData["AbonementId"] = new SelectList(_context.Abonement, "AbonementId", "AbonementId");
@@ -58,6 +62,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Create([Bind("VisitorId,NameV,SurnameV,GroupId,AbonementId")] Visitor visitor)
         {
             if (ModelState.IsValid)
@@ -72,6 +77,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Visitors/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +100,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("VisitorId,NameV,SurnameV,GroupId,AbonementId")] Visitor visitor)
         {
             if (id != visitor.VisitorId)
@@ -127,6 +134,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Visitors/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,6 +155,7 @@ namespace WebApplication2.Controllers
         }
 
         // POST: Visitors/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

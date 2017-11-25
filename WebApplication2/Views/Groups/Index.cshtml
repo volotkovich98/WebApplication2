@@ -1,4 +1,6 @@
-﻿@model IEnumerable<WebApplication2.Groups>
+﻿@using WebApplication2.ViewModel;
+@model IndexViewModel
+@addTagHelper "*, WebApplication2"
 
 @{
     ViewData["Title"] = "Index";
@@ -13,22 +15,22 @@
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Groupname)
+                    Groupname
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.NumberOfLessons)
+                    NumberOfLessons
                 </th>
             <th>
-                @Html.DisplayNameFor(model => model.Instructor)
+                    InstructorId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Schedule)
+                    ScheduleId
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Groups) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Groupname)
@@ -37,10 +39,10 @@
                 @Html.DisplayFor(modelItem => item.NumberOfLessons)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Instructor.InstructorId)
+                @Html.DisplayFor(modelItem => item.InstructorId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Schedule.ScheduleId)
+                @Html.DisplayFor(modelItem => item.ScheduleId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.GroupId">Edit</a> |
@@ -51,3 +53,24 @@
 }
     </tbody>
 </table>
+<page-link page-model="Model.PageViewModel" page-action="Index"></page-link>
+@if
+(Model.PageViewModel.HasPreviousPage)
+{
+<a asp-action="Index"
+   asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+   class="btn btn-default btn">
+    <i class="glyphicon glyphicon-chevron-left"></i>
+    Назад
+</a>
+}
+@if
+(Model.PageViewModel.HasNextPage)
+{
+<a asp-action="Index"
+   asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+   class="btn btn-default btn">
+    Вперед
+    <i class="glyphicon glyphicon-chevron-right"></i>
+</a>
+}

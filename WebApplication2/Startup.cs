@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace WebApplication2
 {
@@ -24,7 +25,14 @@ namespace WebApplication2
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<sportcomplexContext>(options => options.UseSqlServer(connection));
+            // установка конфигурации подключения 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options => //CookieAuthenticationOptions 
+{
+                options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Users/Login");
+            });
             services.AddMvc();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,6 +42,8 @@ namespace WebApplication2
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
+                app.UseSession();
+                app.UseAuthentication();
             }
             else
             {
@@ -46,7 +56,7 @@ namespace WebApplication2
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Groups}/{action=Index}/{id?}");
+                    template: "{controller=Users}/{action=Index}/{id?}");
             });
         }
     }

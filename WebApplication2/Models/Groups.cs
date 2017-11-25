@@ -7,7 +7,6 @@ namespace WebApplication2
     {
         public Groups()
         {
-            ScheduleNavigation = new HashSet<Schedule>();
             Visitor = new HashSet<Visitor>();
         }
 
@@ -19,7 +18,6 @@ namespace WebApplication2
 
         public Instructor Instructor { get; set; }
         public Schedule Schedule { get; set; }
-        public ICollection<Schedule> ScheduleNavigation { get; set; }
         public ICollection<Visitor> Visitor { get; set; }
     }
 }

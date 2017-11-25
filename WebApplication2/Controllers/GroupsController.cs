@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2;
+using Microsoft.AspNetCore.Authorization;
+using WebApplication2.ViewModel;
 
 namespace WebApplication2.Controllers
 {
@@ -19,13 +21,23 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Groups
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "admin, user")]
+        public IActionResult Index(int page=1)
         {
             var sportcomplexContext = _context.Groups.Include(g => g.Instructor).Include(g => g.Schedule);
-            return View(await sportcomplexContext.ToListAsync());
+            int pageSize = 10;
+            IEnumerable<Groups> groupsPerPages = _context.Groups.Skip((page - 1) * pageSize).Take(pageSize);
+            PageViewModel pageView = new PageViewModel(sportcomplexContext.Count(), page, pageSize);
+            IndexViewModel indexViewModel = new IndexViewModel
+            {
+                PageViewModel = pageView,
+                Groups = groupsPerPages
+            };
+            return View(indexViewModel);
         }
 
         // GET: Groups/Details/5
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,6 +58,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Groups/Create
+        [Authorize(Roles = "admin, user")]
         public IActionResult Create()
         {
             ViewData["InstructorId"] = new SelectList(_context.Instructor, "InstructorId", "InstructorId");
@@ -58,6 +71,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Create([Bind("GroupId,InstructorId,Groupname,NumberOfLessons,ScheduleId")] Groups groups)
         {
             if (ModelState.IsValid)
@@ -72,6 +86,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Groups/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +109,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("GroupId,InstructorId,Groupname,NumberOfLessons,ScheduleId")] Groups groups)
         {
             if (id != groups.GroupId)
@@ -127,6 +143,7 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Groups/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,6 +164,7 @@ namespace WebApplication2.Controllers
         }
 
         // POST: Groups/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

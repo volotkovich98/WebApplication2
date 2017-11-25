@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication2;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication2.Controllers
 {
@@ -19,13 +20,14 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Schedules
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Index()
         {
-            var sportcomplexContext = _context.Schedule.Include(s => s.Group);
-            return View(await sportcomplexContext.ToListAsync());
+            return View(await _context.Schedule.ToListAsync());
         }
 
         // GET: Schedules/Details/5
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,7 +36,6 @@ namespace WebApplication2.Controllers
             }
 
             var schedule = await _context.Schedule
-                .Include(s => s.Group)
                 .SingleOrDefaultAsync(m => m.ScheduleId == id);
             if (schedule == null)
             {
@@ -45,9 +46,9 @@ namespace WebApplication2.Controllers
         }
 
         // GET: Schedules/Create
+        [Authorize(Roles = "admin, user")]
         public IActionResult Create()
         {
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "GroupId");
             return View();
         }
 
@@ -56,6 +57,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin, user")]
         public async Task<IActionResult> Create([Bind("ScheduleId,GroupId,Time,DaysOfTheWeek")] Schedule schedule)
         {
             if (ModelState.IsValid)
@@ -64,11 +66,11 @@ namespace WebApplication2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "GroupId", schedule.GroupId);
             return View(schedule);
         }
 
         // GET: Schedules/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,7 +83,6 @@ namespace WebApplication2.Controllers
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "GroupId", schedule.GroupId);
             return View(schedule);
         }
 
@@ -90,6 +91,7 @@ namespace WebApplication2.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("ScheduleId,GroupId,Time,DaysOfTheWeek")] Schedule schedule)
         {
             if (id != schedule.ScheduleId)
@@ -117,11 +119,11 @@ namespace WebApplication2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "GroupId", schedule.GroupId);
             return View(schedule);
         }
 
         // GET: Schedules/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,7 +132,6 @@ namespace WebApplication2.Controllers
             }
 
             var schedule = await _context.Schedule
-                .Include(s => s.Group)
                 .SingleOrDefaultAsync(m => m.ScheduleId == id);
             if (schedule == null)
             {
@@ -141,6 +142,7 @@ namespace WebApplication2.Controllers
         }
 
         // POST: Schedules/Delete/5
+        [Authorize(Roles = "admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
